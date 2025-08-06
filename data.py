@@ -29,9 +29,12 @@ test[numeric_cols] = imputer.transform(test[numeric_cols])
 
 # Impute missing values for non-numeric columns with the mode
 for column in non_numeric_cols:
-    X_train[column].fillna(X_train[column].mode()[0], inplace=True)
-    X_val[column].fillna(X_val[column].mode()[0], inplace=True)
-    test[column].fillna(test[column].mode()[0], inplace=True)
+    # X_train[column].fillna(X_train[column].mode()[0], inplace=True)
+    X_train.loc[:, column] = X_train[column].fillna(X_train[column].mode()[0])
+    # X_val[column].fillna(X_val[column].mode()[0], inplace=True)
+    X_val.loc[:, column] = X_val[column].fillna(X_val[column].mode()[0])
+    # test[column].fillna(test[column].mode()[0], inplace=True)
+    test.loc[:, column] = test[column].fillna(test[column].mode()[0])
 
 
 ohe = OneHotEncoder(drop='first', handle_unknown='ignore')
@@ -39,3 +42,14 @@ ohe = OneHotEncoder(drop='first', handle_unknown='ignore')
 X_train = ohe.fit_transform(X_train)
 X_val = ohe.transform(X_val)
 test = ohe.transform(test)
+
+"""
+OneHotEncoder(drop='first', handle_unknown='ignore')
+
+The parameters:
+- drop='first' - This removes one of the encoded columns to avoid multicollinearity (the "dummy variable trap"). If you have 3 colors, instead of creating 3 columns, it creates only 2. The dropped category becomes the reference category - when all other columns are 0, it implies the dropped category. This is important for linear models that can have issues when columns are perfectly correlated.
+
+- handle_unknown='ignore' - This tells the encoder what to do when it encounters new categorical values during transformation that weren't present during training. With 'ignore', it sets all columns to 0 for unknown categories, effectively treating them as the reference category. Other options include 'error' (raise an exception) or 'infrequent_if_exist' (group rare categories).
+
+This configuration is commonly used in machine learning pipelines where you want to avoid multicollinearity issues and gracefully handle new categorical values in production data.
+"""

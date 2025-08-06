@@ -2,7 +2,7 @@ import mlflow
 import numpy as np
 from data import X_train, X_val, y_train, y_val
 from sklearn.linear_model import Ridge, ElasticNet
-from xgboost import XGBRegressor
+# from xgboost import XGBRegressor
 from sklearn.model_selection import ParameterGrid
 from params import ridge_param_grid, elasticnet_param_grid, xgb_param_grid
 from utils import eval_metrics
